@@ -1,0 +1,4 @@
+module CBacktrace {
+    header "shim.h"
+    export *
+}

@@ -9,15 +9,12 @@ let package = Package(
             name: "Backtrace",
             targets: ["Backtrace"]),
     ],
-    dependencies: [
-    ],
+    dependencies: [],
     targets: [
-        .target(
-            name: "CBacktrace",
-            dependencies: []),
+        .systemLibrary(name: "CBacktrace"),
         .target(
             name: "Backtrace",
-            dependencies: ["CBacktrace"]),
+            dependencies: [.target(name: "CBacktrace")]),
         .testTarget(
             name: "BacktraceTests",
             dependencies: ["Backtrace"])
