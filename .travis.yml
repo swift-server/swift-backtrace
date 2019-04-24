@@ -17,6 +17,11 @@ matrix:
       sudo: required
       services: docker
       env: DOCKER_IMAGE=swift:5.0-xenial
+    - os: linux
+      dist: xenial
+      sudo: required
+      services: docker
+      env: DOCKER_IMAGE=swift:5.0-bionic
     - os: osx
       osx_image: xcode10.2
       sudo: required
