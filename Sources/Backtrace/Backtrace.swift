@@ -13,7 +13,7 @@ public enum Backtrace {
             let ptr = backtrace_symbols(stackSymbols.baseAddress!, howMany)
             let realAddresses = Array(UnsafeBufferPointer(start: ptr, count: Int(howMany))).compactMap { $0 }
             realAddresses.forEach {
-                print(String(cString: $0))
+                fputs($0, stderr)
             }
         }
     }
