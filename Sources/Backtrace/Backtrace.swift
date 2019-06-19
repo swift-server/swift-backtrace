@@ -14,6 +14,7 @@ public enum Backtrace {
             let realAddresses = Array(UnsafeBufferPointer(start: ptr, count: Int(howMany))).compactMap { $0 }
             realAddresses.forEach {
                 fputs($0, stderr)
+                fputc(0x0A, stderr)
             }
         }
     }
