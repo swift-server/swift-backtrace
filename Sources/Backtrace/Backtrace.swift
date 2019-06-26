@@ -10,12 +10,7 @@ public enum Backtrace {
             let stackSymbols: UnsafeMutableBufferPointer<UnsafeMutableRawPointer?> = .allocate(capacity: maxFrames)
             stackSymbols.initialize(repeating: nil)
             let howMany = backtrace(stackSymbols.baseAddress!, CInt(maxFrames))
-            let ptr = backtrace_symbols(stackSymbols.baseAddress!, howMany)
-            let realAddresses = Array(UnsafeBufferPointer(start: ptr, count: Int(howMany))).compactMap { $0 }
-            realAddresses.forEach {
-                fputs($0, stderr)
-                fputc(0x0A, stderr)
-            }
+            backtrace_symbols_fd(stackSymbols.baseAddress!, howMany, STDERR_FILENO)
         }
     }
 
