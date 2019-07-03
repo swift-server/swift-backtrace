@@ -11,7 +11,9 @@ let package = Package(
     ],
     dependencies: [],
     targets: [
-        .systemLibrary(name: "CBacktrace"),
+        .target(
+            name: "CBacktrace",
+            dependencies: []),
         .target(
             name: "Backtrace",
             dependencies: [.target(name: "CBacktrace")]),
