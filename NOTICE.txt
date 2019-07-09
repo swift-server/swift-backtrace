@@ -1,0 +1,6 @@
+This product contains a derivation of "libbacktrace" from Ian Lance Taylor.
+
+ * LICENSE (BSD-3-Clause):
+   * https://github.com/ianlancetaylor/libbacktrace/blob/master/LICENSE
+ * HOMEPAGE:
+   * https://github.com/ianlancetaylor/libbacktrace
