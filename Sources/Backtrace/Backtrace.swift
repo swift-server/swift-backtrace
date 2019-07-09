@@ -5,12 +5,8 @@ import CBacktrace
 public enum Backtrace {
     public static func install() {
         setupHandler(signal: SIGILL) { _ in
-            // this is all undefined behaviour, not allowed to malloc or call backtrace here...
-            let maxFrames = 50
-            let stackSymbols: UnsafeMutableBufferPointer<UnsafeMutableRawPointer?> = .allocate(capacity: maxFrames)
-            stackSymbols.initialize(repeating: nil)
-            let howMany = backtrace(stackSymbols.baseAddress!, CInt(maxFrames))
-            backtrace_symbols_fd(stackSymbols.baseAddress!, howMany, STDERR_FILENO)
+            let state = backtrace_create_state(CommandLine.arguments[0], 1, nil, nil)
+            backtrace_print(state, 5, stderr)
         }
     }
 
