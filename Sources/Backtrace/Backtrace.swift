@@ -2,10 +2,12 @@
 import Glibc
 import CBacktrace
 
+private let fileName = CommandLine.arguments[0]
+
 public enum Backtrace {
     public static func install() {
         setupHandler(signal: SIGILL) { _ in
-            let state = backtrace_create_state(CommandLine.arguments[0], 1, nil, nil)
+            let state = backtrace_create_state(fileName, 1, nil, nil)
             backtrace_print(state, 5, stderr)
         }
     }
