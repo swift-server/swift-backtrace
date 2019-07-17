@@ -2,11 +2,61 @@
 import Glibc
 import CBacktrace
 
+typealias CBacktraceErrorCallback = @convention(c) (_ data: UnsafeMutableRawPointer?, _ msg: UnsafePointer<CChar>?, _ errnum: CInt) -> Void
+typealias CBacktraceFullCallback = @convention(c) (_ data: UnsafeMutableRawPointer?, _ pc: UInt, _ filename: UnsafePointer<CChar>?, _ lineno: CInt, _ function: UnsafePointer<CChar>?) -> CInt
+typealias CBacktraceSimpleCallback = @convention(c) (_ data: UnsafeMutableRawPointer?, _ pc: UInt) -> CInt
+typealias CBacktraceSyminfoCallback = @convention(c) (_ data: UnsafeMutableRawPointer?, _ pc: UInt, _ filename: UnsafePointer<CChar>?, _ symval: UInt, _ symsize: UInt) -> Void
+
+private let state = backtrace_create_state(CommandLine.arguments[0], /* BACKTRACE_SUPPORTS_THREADS */ 1, nil, nil)
+
+private let fullCallback: CBacktraceFullCallback? = {
+    data, pc, filename, lineno, function in
+
+    var str = "0x"
+    str.append(String(pc, radix: 16))
+    if let function = function {
+        str.append(", ")
+        var fn = String(cString: function)
+        if fn.hasPrefix("$s") || fn.hasPrefix("$S") {
+            fn = _stdlib_demangleName(fn)
+        }
+        str.append(fn)
+    }
+    if let filename = filename {
+        str.append(" at ")
+        str.append(String(cString: filename))
+        str.append(":")
+        str.append(String(lineno))
+    }
+    str.append("\n")
+
+    str.withCString { ptr in
+        _ = withVaList([ptr]) { vaList in
+            vfprintf(stderr, "%s", vaList)
+        }
+    }
+    return 0
+}
+
+private let simpleCallback: CBacktraceSimpleCallback? = {
+   data, pc in
+   backtrace_pcinfo(state, pc, fullCallback, errorCallback, data)
+   return 0
+}
+
+private let errorCallback: CBacktraceErrorCallback? = {
+    data, msg, errnum in
+    if let msg = msg {
+        _ = withVaList([msg]) { vaList in
+            vfprintf(stderr, "%s", vaList)
+        }
+    }
+}
+
 public enum Backtrace {
     public static func install() {
         setupHandler(signal: SIGILL) { _ in
-            let state = backtrace_create_state(CommandLine.arguments[0], 1, nil, nil)
-            backtrace_print(state, 5, stderr)
+            backtrace_simple(state, /* skip */ 5, simpleCallback, errorCallback, /* data */ nil)
         }
     }
 
