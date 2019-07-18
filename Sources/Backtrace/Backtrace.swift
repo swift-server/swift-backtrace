@@ -38,17 +38,11 @@ private let fullCallback: CBacktraceFullCallback? = {
     return 0
 }
 
-private let simpleCallback: CBacktraceSimpleCallback? = {
-   data, pc in
-   backtrace_pcinfo(state, pc, fullCallback, errorCallback, data)
-   return 0
-}
-
 private let errorCallback: CBacktraceErrorCallback? = {
     data, msg, errnum in
     if let msg = msg {
         _ = withVaList([msg]) { vaList in
-            vfprintf(stderr, "%s", vaList)
+            vfprintf(stderr, "%s\n", vaList)
         }
     }
 }
@@ -56,7 +50,7 @@ private let errorCallback: CBacktraceErrorCallback? = {
 public enum Backtrace {
     public static func install() {
         setupHandler(signal: SIGILL) { _ in
-            backtrace_simple(state, /* skip */ 5, simpleCallback, errorCallback, /* data */ nil)
+            backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
         }
     }
 
