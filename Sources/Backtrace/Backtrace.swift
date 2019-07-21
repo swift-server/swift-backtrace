@@ -54,6 +54,10 @@ public enum Backtrace {
         }
     }
 
+    public static func print() {
+        backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+    }
+
     private static func setupHandler(signal: Int32, handler: @escaping @convention(c) (CInt) -> Void) {
         typealias sigaction_t = sigaction
         let sa_flags = CInt(SA_NODEFER) | CInt(bitPattern: CUnsignedInt(SA_RESETHAND))
@@ -69,6 +73,9 @@ public enum Backtrace {
 #else
 public enum Backtrace {
     public static func install() { 
+    }
+
+    public static func print() {
     }
 }
 #endif
