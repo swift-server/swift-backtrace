@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* print.c -- Print the current backtrace.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -90,3 +91,4 @@ backtrace_print (struct backtrace_state *state, int skip, FILE *f)
   backtrace_full (state, skip + 1, print_callback, error_callback,
 		  (void *) &data);
 }
+#endif

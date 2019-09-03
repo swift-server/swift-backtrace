@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* dwarf.c -- Get file/line information from DWARF for backtraces.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -3124,3 +3125,4 @@ backtrace_dwarf_add (struct backtrace_state *state,
 
   return 1;
 }
+#endif

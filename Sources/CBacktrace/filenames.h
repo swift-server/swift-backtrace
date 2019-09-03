@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* btest.c -- Filename header for libbacktrace library
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -46,4 +47,5 @@ POSSIBILITY OF SUCH DAMAGE.  */
 # define IS_DIR_SEPARATOR(c) ((c) == '/' || (c) == '\\')
 #else
 # define IS_DIR_SEPARATOR(c) ((c) == '/')
+#endif
 #endif

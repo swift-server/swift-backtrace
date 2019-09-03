@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* atomic.c -- Support for atomic functions if not present.
    Copyright (C) 2013-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -110,4 +111,5 @@ backtrace_atomic_store_int (int *p, int v)
     old = *p;
 }
 
+#endif
 #endif

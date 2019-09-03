@@ -69,4 +69,7 @@ mv "$DSTROOT/backtrace.h" "$DSTROOT/include"
 echo "REPLACING references to \"backtrace.h\" with \"include/backtrace.h\""
 find $DSTROOT -name "*.[ch]" -print0 | xargs -0 sed -i -e 's#"backtrace.h"#"include/backtrace.h"#g'
 
+echo "ADDING preprocessor conditionals"
+find $DSTROOT -name "*.[ch]" -print0 | xargs -0 sed -i -e '1i#ifdef __linux__' -e '$a#endif'
+
 echo "DONE"

@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* fileline.c -- Get file and line number information in a backtrace.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -199,3 +200,4 @@ backtrace_syminfo (struct backtrace_state *state, uintptr_t pc,
   state->syminfo_fn (state, pc, callback, error_callback, data);
   return 1;
 }
+#endif

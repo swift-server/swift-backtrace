@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* backtrace-supported.h.in -- Whether stack backtrace is supported.
    Copyright (C) 2012-2016 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -64,3 +65,4 @@ POSSIBILITY OF SUCH DAMAGE.  */
    will work for variables.  It will always work for functions.  */
 
 #define BACKTRACE_SUPPORTS_DATA 1
+#endif
