@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* simple.c -- The backtrace_simple function.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -106,3 +107,4 @@ backtrace_simple (struct backtrace_state *state, int skip,
   _Unwind_Backtrace (simple_unwind, &bdata);
   return bdata.ret;
 }
+#endif

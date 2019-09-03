@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* internal.h -- Internal header file for stack backtrace library.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -301,4 +302,5 @@ extern int backtrace_uncompress_zdebug (struct backtrace_state *,
 					unsigned char **uncompressed,
 					size_t *uncompressed_size);
 
+#endif
 #endif

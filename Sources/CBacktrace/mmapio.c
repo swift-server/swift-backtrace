@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* mmapio.c -- File views using mmap.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -98,3 +99,4 @@ backtrace_release_view (struct backtrace_state *state ATTRIBUTE_UNUSED,
   if (munmap (const_cast.v, view->len) < 0)
     error_callback (data, "munmap", errno);
 }
+#endif

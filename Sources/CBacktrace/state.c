@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* state.c -- Create the backtrace state.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -70,3 +71,4 @@ backtrace_create_state (const char *filename, int threaded,
 
   return state;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* elf.c -- Get debug data from an ELF file for backtraces.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -3338,3 +3339,4 @@ backtrace_initialize (struct backtrace_state *state, const char *filename,
 
   return 1;
 }
+#endif

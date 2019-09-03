@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* mmap.c -- Memory allocation with mmap.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -323,3 +324,4 @@ backtrace_vector_release (struct backtrace_state *state,
   vec->alc = 0;
   return 1;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* backtrace.c -- Entry point for stack backtrace library.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -127,3 +128,4 @@ backtrace_full (struct backtrace_state *state, int skip,
   _Unwind_Backtrace (unwind, &bdata);
   return bdata.ret;
 }
+#endif

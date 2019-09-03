@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* backtrace.h -- Public header file for stack backtrace library.
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -179,4 +180,5 @@ extern int backtrace_syminfo (struct backtrace_state *state, uintptr_t addr,
 } /* End extern "C".  */
 #endif
 
+#endif
 #endif

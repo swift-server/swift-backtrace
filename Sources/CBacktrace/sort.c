@@ -1,3 +1,4 @@
+#ifdef __linux__
 /* sort.c -- Sort without allocating memory
    Copyright (C) 2012-2018 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
@@ -106,3 +107,4 @@ backtrace_qsort (void *basearg, size_t count, size_t size,
       goto tail_recurse;
     }
 }
+#endif
