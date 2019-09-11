@@ -6,7 +6,9 @@ This Swift package provides support for automatically printing crash backtraces 
 
 Add `https://github.com/ianpartridge/swift-backtrace.git` as a dependency in your `Package.swift`.
 
-Then, in your `main.swift`, do:
+### Crash backtraces
+
+In your `main.swift`, do:
 
 ```swift
 import Backtrace
@@ -22,6 +24,14 @@ $ swift build -c release -Xswiftc -g
 ```
 
 When your app crashes, a stacktrace will be printed to `stderr`.
+
+### Printing a backtrace at any time
+
+```swift
+import Backtrace
+
+Backtrace.print() // Goes to stderr
+```
 
 ## Acknowledgements
 
