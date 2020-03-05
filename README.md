@@ -4,7 +4,7 @@ This Swift package provides support for automatically printing crash backtraces 
 
 ## Usage
 
-Add `https://github.com/ianpartridge/swift-backtrace.git` as a dependency in your `Package.swift`.
+Add `https://github.com/swift-server/swift-backtrace.git` as a dependency in your `Package.swift`.
 
 ### Crash backtraces
 
