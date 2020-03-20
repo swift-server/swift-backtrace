@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftLinuxBacktrace open source project
 //
-// Copyright (c) YEARS Apple Inc. and the SwiftLinuxBacktrace project authors
+// Copyright (c) 2019-2020 Apple Inc. and the SwiftLinuxBacktrace project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
