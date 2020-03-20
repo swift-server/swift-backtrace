@@ -1,6 +1,20 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the SwiftLinuxBacktrace open source project
+//
+// Copyright (c) YEARS Apple Inc. and the SwiftLinuxBacktrace project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE.txt for license information
+// See CONTRIBUTORS.txt for the list of SwiftLinuxBacktrace project authors
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+//===----------------------------------------------------------------------===//
+
 #if os(Linux)
-import Glibc
 import CBacktrace
+import Glibc
 
 typealias CBacktraceErrorCallback = @convention(c) (_ data: UnsafeMutableRawPointer?, _ msg: UnsafePointer<CChar>?, _ errnum: CInt) -> Void
 typealias CBacktraceFullCallback = @convention(c) (_ data: UnsafeMutableRawPointer?, _ pc: UInt, _ filename: UnsafePointer<CChar>?, _ lineno: CInt, _ function: UnsafePointer<CChar>?) -> CInt
@@ -10,7 +24,7 @@ typealias CBacktraceSyminfoCallback = @convention(c) (_ data: UnsafeMutableRawPo
 private let state = backtrace_create_state(CommandLine.arguments[0], /* BACKTRACE_SUPPORTS_THREADS */ 1, nil, nil)
 
 private let fullCallback: CBacktraceFullCallback? = {
-    data, pc, filename, lineno, function in
+    _, pc, filename, lineno, function in
 
     var str = "0x"
     str.append(String(pc, radix: 16))
@@ -39,7 +53,7 @@ private let fullCallback: CBacktraceFullCallback? = {
 }
 
 private let errorCallback: CBacktraceErrorCallback? = {
-    data, msg, errnum in
+    _, msg, _ in
     if let msg = msg {
         _ = withVaList([msg]) { vaList in
             vfprintf(stderr, "%s\n", vaList)
@@ -49,7 +63,7 @@ private let errorCallback: CBacktraceErrorCallback? = {
 
 public enum Backtrace {
     public static func install() {
-        setupHandler(signal: SIGILL) { _ in
+        self.setupHandler(signal: SIGILL) { _ in
             backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
         }
     }
@@ -70,12 +84,11 @@ public enum Backtrace {
         }
     }
 }
+
 #else
 public enum Backtrace {
-    public static func install() { 
-    }
+    public static func install() {}
 
-    public static func print() {
-    }
+    public static func print() {}
 }
 #endif

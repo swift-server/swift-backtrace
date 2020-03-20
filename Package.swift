@@ -7,7 +7,8 @@ let package = Package(
     products: [
         .library(
             name: "Backtrace",
-            targets: ["Backtrace"]),
+            targets: ["Backtrace"]
+        ),
     ],
     dependencies: [],
     targets: [
@@ -16,6 +17,6 @@ let package = Package(
         .target(name: "CBacktrace",
                 dependencies: []),
         .testTarget(name: "BacktraceTests",
-                dependencies: ["Backtrace"])
+                    dependencies: ["Backtrace"]),
     ]
 )
