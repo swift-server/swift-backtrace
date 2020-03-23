@@ -64,11 +64,11 @@ private let errorCallback: CBacktraceErrorCallback? = {
 public enum Backtrace {
     public static func install() {
         self.setupHandler(signal: SIGILL) { _ in
-            backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+            Backtrace.print()
         }
     }
 
-    public static func print() {
+    private static func print() {
         backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
     }
 
