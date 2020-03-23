@@ -12,14 +12,24 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import Backtrace
 import XCTest
 
-final class BacktraceTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssert(true)
+public final class BacktraceTests: XCTestCase {
+    func testBacktrace() {
+        #if os(Linux)
+        let expectedError = UUID().uuidString
+        let pipe = Pipe()
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: ".build/release/Sample")
+        process.arguments = [expectedError]
+        process.standardError = pipe
+        XCTAssertNoThrow(try process.run())
+        if process.isRunning {
+            process.waitUntilExit()
+        }
+        let stderr = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        print(stderr)
+        XCTAssert(stderr.contains("Fatal error: \(expectedError)"), "expected stanard error to include error information")
+        #endif
     }
 }
