@@ -20,8 +20,8 @@ public final class BacktraceTests: XCTestCase {
         let expectedError = UUID().uuidString
         let pipe = Pipe()
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: ".build/release/Sample")
-        process.arguments = [expectedError]
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/swift")
+        process.arguments = ["run", "Sample", expectedError]
         process.standardError = pipe
         XCTAssertNoThrow(try process.run())
         if process.isRunning {
@@ -29,6 +29,7 @@ public final class BacktraceTests: XCTestCase {
         }
         let stderr = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
         print(stderr)
+        XCTAssert(stderr.contains("Current stack trace:"), "expected stanard error to include backtrace")
         XCTAssert(stderr.contains("Fatal error: \(expectedError)"), "expected stanard error to include error information")
         #endif
     }
