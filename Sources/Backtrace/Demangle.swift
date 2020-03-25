@@ -14,9 +14,6 @@
 
 #if os(Linux)
 import Glibc
-#else
-import Darwin
-#endif
 
 @_silgen_name("swift_demangle")
 public
@@ -48,3 +45,4 @@ internal func _stdlib_demangleName(_ mangledName: String) -> String {
         return mangledName
     }
 }
+#endif
