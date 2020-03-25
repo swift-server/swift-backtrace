@@ -28,7 +28,7 @@ services:
 
   test:
     <<: *common
-    command: /bin/bash -cl "swift test -Xswiftc -warnings-as-errors $${SANITIZER_ARG-}"
+    command: /bin/bash -cl "swift test -c release -Xswiftc -g -Xswiftc -warnings-as-errors $${SANITIZER_ARG-}"
 
   # util
 

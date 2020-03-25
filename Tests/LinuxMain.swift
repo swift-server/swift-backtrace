@@ -23,7 +23,7 @@ import XCTest
 ///
 
 #if os(Linux) || os(FreeBSD)
-@testable import BacktraceTests
+import BacktraceTests
 
 XCTMain([
     testCase(BacktraceTests.allTests),

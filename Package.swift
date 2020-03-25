@@ -16,6 +16,8 @@ let package = Package(
                 dependencies: ["CBacktrace"]),
         .target(name: "CBacktrace",
                 dependencies: []),
+        .target(name: "Sample",
+                dependencies: ["Backtrace"]),
         .testTarget(name: "BacktraceTests",
                     dependencies: ["Backtrace"]),
     ]
