@@ -25,13 +25,6 @@ $ swift build -c release -Xswiftc -g
 
 When your app crashes, a stacktrace will be printed to `stderr`.
 
-### Printing a backtrace at any time
-
-```swift
-import Backtrace
-
-Backtrace.print() // Goes to stderr
-```
 
 ## Acknowledgements
 

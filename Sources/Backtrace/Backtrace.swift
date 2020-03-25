@@ -68,6 +68,7 @@ public enum Backtrace {
         }
     }
 
+    @available(*, deprecated, message: "This method will be removed in the next major version.")
     public static func print() {
         backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
     }
@@ -89,6 +90,7 @@ public enum Backtrace {
 public enum Backtrace {
     public static func install() {}
 
+    @available(*, deprecated, message: "This method will be removed in the next major version.")
     public static func print() {}
 }
 #endif
