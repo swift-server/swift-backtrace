@@ -27,13 +27,14 @@ When your app crashes, a stacktrace will be printed to `stderr`.
 
 ### Integrating Backtrace with swift-service-lifecycle
 
-If you are using swift-service-lifecycle https://github.com/swift-server/swift-service-lifecycle, you can trigger a register a backtrace by adding the following to your lifecycle:
+If you are using swift-service-lifecycle https://github.com/swift-server/swift-service-lifecycle, using the Backtrace.install() command will interfere with the shutdown lifecycle.  Instead, add Backtrace.print to your lifecycle:
 
 ```swift
 import Backtrace
 
 lifecycle.registerShutdown(label: "backtrace",.sync(Backtrace.print))
 ```
+
 
 ## Acknowledgements
 
