@@ -31,3 +31,4 @@ When your app crashes, a stacktrace will be printed to `stderr`.
 Ian Partridge ([GitHub](https://github.com/ianpartridge/), [Twitter](https://twitter.com/alfa)) the original author of this package.
 
 Johannes Weiss ([GitHub](https://github.com/weissi), [Twitter](https://twitter.com/johannesweiss)) for the signal handling code.
+
