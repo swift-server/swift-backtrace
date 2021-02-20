@@ -53,10 +53,10 @@ private let fullCallback: CBacktraceFullCallback? = {
 }
 
 private let errorCallback: CBacktraceErrorCallback? = {
-    _, msg, _ in
+    _, msg, errNo in
     if let msg = msg {
-        _ = withVaList([msg]) { vaList in
-            vfprintf(stderr, "%s\n", vaList)
+        _ = withVaList([msg, errNo]) { vaList in
+            vfprintf(stderr, "SwiftBacktrace ERROR: %s (errno: %d)\n", vaList)
         }
     }
 }

@@ -71,7 +71,7 @@ backtrace_get_view (struct backtrace_state *state ATTRIBUTE_UNUSED,
   map = mmap (NULL, size, PROT_READ, MAP_PRIVATE, descriptor, pageoff);
   if (map == MAP_FAILED)
     {
-      error_callback (data, "mmap", errno);
+      error_callback (data, "mmap file i/o", errno);
       return 0;
     }
 
