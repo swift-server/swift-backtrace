@@ -94,13 +94,13 @@ fileline_initialize (struct backtrace_state *state,
 	  filename = state->filename;
 	  break;
 	case 1:
-	  filename = getexecname ();
-	  break;
-	case 2:
 	  filename = "/proc/self/exe";
 	  break;
-	case 3:
+	case 2:
 	  filename = "/proc/curproc/file";
+	  break;
+	case 3:
+	  filename = getexecname ();
 	  break;
 	case 4:
 	  snprintf (buf, sizeof (buf), "/proc/%ld/object/a.out",
