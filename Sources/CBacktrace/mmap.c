@@ -170,7 +170,7 @@ backtrace_alloc (struct backtrace_state *state,
       if (page == MAP_FAILED)
 	{
 	  if (error_callback)
-	    error_callback (data, "mmap", errno);
+	    error_callback (data, "mmap for alloc", errno);
 	}
       else
 	{
