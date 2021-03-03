@@ -17,7 +17,7 @@ import Backtrace
 Backtrace.install()
 ```
 
-Finally, make sure you build your application with debug symbols enabled:
+Finally, for Swift < 5.2, make sure you build your application with debug symbols enabled. Debug symbols are automatically included for Swift 5.2 and above.
 
 ```
 $ swift build -c release -Xswiftc -g
