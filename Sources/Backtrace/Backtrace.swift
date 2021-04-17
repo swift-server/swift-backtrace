@@ -25,13 +25,14 @@ private let state = backtrace_create_state(nil, /* BACKTRACE_SUPPORTS_THREADS */
 
 private let fullCallback: CBacktraceFullCallback? = {
     _, pc, filename, lineno, function in
-  
-  Backtrace.printFrame(
-    pc,
-    filename.map(String.init(cString:)),
-    lineno,
-    function.map(String.init(cString:)))
-  
+
+    Backtrace.printFrame(
+        pc,
+        filename.map(String.init(cString:)),
+        lineno,
+        function.map(String.init(cString:))
+    )
+
     return 0
 }
 
@@ -71,6 +72,6 @@ public enum Backtrace {
 
 #else
 public enum Backtrace {
-  /// Implementated in `Unwind.swift`
+    /// Implementated in `Unwind.swift`
 }
 #endif

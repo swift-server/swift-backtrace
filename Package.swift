@@ -17,7 +17,7 @@ let package = Package(
         .target(name: "CBacktrace",
                 dependencies: []),
         .target(name: "CLibUnwind",
-              dependencies: []),
+                dependencies: []),
         .target(name: "Sample",
                 dependencies: ["Backtrace"]),
         .testTarget(name: "BacktraceTests",

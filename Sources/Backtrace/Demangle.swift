@@ -32,7 +32,7 @@ func _stdlib_demangleImpl(
 
 internal func _stdlib_demangleName(_ mangledName: String) -> String {
     guard mangledName.hasPrefix("$s") || mangledName.hasPrefix("$S") else {
-      return mangledName
+        return mangledName
     }
     return mangledName.utf8CString.withUnsafeBufferPointer {
         mangledNameUTF8CStr in
