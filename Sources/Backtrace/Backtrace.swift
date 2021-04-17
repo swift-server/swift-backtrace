@@ -25,30 +25,13 @@ private let state = backtrace_create_state(nil, /* BACKTRACE_SUPPORTS_THREADS */
 
 private let fullCallback: CBacktraceFullCallback? = {
     _, pc, filename, lineno, function in
-
-    var str = "0x"
-    str.append(String(pc, radix: 16))
-    if let function = function {
-        str.append(", ")
-        var fn = String(cString: function)
-        if fn.hasPrefix("$s") || fn.hasPrefix("$S") {
-            fn = _stdlib_demangleName(fn)
-        }
-        str.append(fn)
-    }
-    if let filename = filename {
-        str.append(" at ")
-        str.append(String(cString: filename))
-        str.append(":")
-        str.append(String(lineno))
-    }
-    str.append("\n")
-
-    str.withCString { ptr in
-        _ = withVaList([ptr]) { vaList in
-            vfprintf(stderr, "%s", vaList)
-        }
-    }
+  
+  Backtrace.printFrame(
+    pc,
+    filename.map(String.init(cString:)),
+    lineno,
+    function.map(String.init(cString:)))
+  
     return 0
 }
 
@@ -88,9 +71,6 @@ public enum Backtrace {
 
 #else
 public enum Backtrace {
-    public static func install() {}
-
-    @available(*, deprecated, message: "This method will be removed in the next major version.")
-    public static func print() {}
+  /// Implementated in `Unwind.swift`
 }
 #endif

@@ -13,7 +13,12 @@
 //===----------------------------------------------------------------------===//
 
 #if os(Linux)
-import Glibc
+import func Glibc.free
+#elseif os(macOS)
+import func Darwin.free
+#else
+#error("Unsupported platform.")
+#endif
 
 @_silgen_name("swift_demangle")
 public
@@ -26,6 +31,9 @@ func _stdlib_demangleImpl(
 ) -> UnsafeMutablePointer<CChar>?
 
 internal func _stdlib_demangleName(_ mangledName: String) -> String {
+    guard mangledName.hasPrefix("$s") || mangledName.hasPrefix("$S") else {
+      return mangledName
+    }
     return mangledName.utf8CString.withUnsafeBufferPointer {
         mangledNameUTF8CStr in
 
@@ -45,4 +53,3 @@ internal func _stdlib_demangleName(_ mangledName: String) -> String {
         return mangledName
     }
 }
-#endif

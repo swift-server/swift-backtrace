@@ -16,7 +16,6 @@ import XCTest
 
 public final class BacktraceTests: XCTestCase {
     func testBacktrace() {
-        #if os(Linux)
         let expectedError = UUID().uuidString
         let pipe = Pipe()
         let process = Process()
@@ -31,6 +30,5 @@ public final class BacktraceTests: XCTestCase {
         print(stderr)
         XCTAssert(stderr.contains("Current stack trace:"), "expected stanard error to include backtrace")
         XCTAssert(stderr.contains("Fatal error: \(expectedError)"), "expected stanard error to include error information")
-        #endif
     }
 }
