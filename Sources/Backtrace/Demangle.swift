@@ -14,6 +14,14 @@
 
 #if os(Linux)
 import Glibc
+#elseif os(Windows)
+#if swift(<5.4)
+#error("unsupported Swift version")
+#else
+@_implementationOnly
+import ucrt
+#endif
+#endif
 
 @_silgen_name("swift_demangle")
 public
@@ -45,4 +53,3 @@ internal func _stdlib_demangleName(_ mangledName: String) -> String {
         return mangledName
     }
 }
-#endif
