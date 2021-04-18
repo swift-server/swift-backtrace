@@ -9,6 +9,10 @@ let package = Package(
             name: "Backtrace",
             targets: ["Backtrace"]
         ),
+        .executable(
+          name: "Sample",
+          targets: ["Sample"]
+        )
     ],
     dependencies: [],
     targets: [
