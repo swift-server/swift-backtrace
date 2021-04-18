@@ -86,6 +86,162 @@ public enum Backtrace {
     }
 }
 
+#elseif os(Windows)
+#if swift(<5.4)
+#error("unsupported Swift version")
+#else
+@_implementationOnly import CRT
+@_implementationOnly import WinSDK
+#endif
+
+public enum Backtrace {
+    private static var MachineType: DWORD {
+        #if arch(arm)
+        DWORD(IMAGE_FILE_MACHINE_ARMNT)
+        #elseif arch(arm64)
+        DWORD(IMAGE_FILE_MACHINE_ARM64)
+        #elseif arch(i386)
+        DWORD(IMAGE_FILE_MACHINE_I386)
+        #elseif arch(x86_64)
+        DWORD(IMAGE_FILE_MACHINE_AMD64)
+        #else
+        #error("unsupported architecture")
+        #endif
+    }
+
+    public static func install() {
+        // Install a last-chance vectored exception handler to capture the error
+        // before the termination and report the stack trace.  It is unlikely
+        // that this will be recovered at this point by a SEH handler.
+        _ = AddVectoredExceptionHandler(0) { _ in
+            // NOTE: GetCurrentProcess does not increment the reference count on
+            // the process.  This handle should _not_ be closed upon completion.
+            let hProcess: HANDLE = GetCurrentProcess()
+
+            var cxr: CONTEXT = CONTEXT()
+            cxr.ContextFlags =
+                DWORD(CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_FLOATING_POINT)
+            RtlCaptureContext(&cxr)
+
+            _ = SymInitializeW(hProcess, nil, true)
+            _ = SymSetOptions(DWORD(SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES | SYMOPT_UNDNAME))
+
+            var Frame: STACKFRAME64 = STACKFRAME64()
+            #if arch(arm)
+            Frame.AddrPC.Offset = cxr.Pc
+            Frame.AddrFrame.Offset = cxr.R11
+            Frame.AddrStack.Offset = cxr.Sp
+            #elseif arch(arm64)
+            Frame.AddrPC.Offset = cxr.Pc
+            Frame.AddrFrame.Offset = cxr.Fp
+            Frame.AddrStack.Offset = cxr.Sp
+            #elseif arch(i386)
+            Frame.AddrPC.Offset = cxr.Eip
+            Frame.AddrFrame.Offset = cxr.Ebp
+            Frame.AddrStack.Offset = cxr.Esp
+            #elseif arch(x86_64)
+            Frame.AddrPC.Offset = cxr.Rip
+            Frame.AddrFrame.Offset = cxr.Rbp
+            Frame.AddrStack.Offset = cxr.Rsp
+            #else
+            #error("unsupported architecture")
+            #endif
+            Frame.AddrPC.Mode = AddrModeFlat
+            Frame.AddrFrame.Mode = AddrModeFlat
+            Frame.AddrStack.Mode = AddrModeFlat
+
+            // Constant indicating the maximum symbol length that we expect
+            // during symbolication of the stack trace.
+            let kMaxSymbolLength: Int = 255
+
+            // Heap allocate the buffer as we need to account for the trailing
+            // storage that we need to provide.
+            let pSymbolBuffer: UnsafeMutableRawPointer =
+                UnsafeMutableRawPointer.allocate(byteCount: MemoryLayout<IMAGEHLP_SYMBOL64>.size + kMaxSymbolLength,
+                                                 alignment: 1)
+            defer { pSymbolBuffer.deallocate() }
+
+            let pSymbol: UnsafeMutablePointer<IMAGEHLP_SYMBOL64> =
+                pSymbolBuffer.bindMemory(to: IMAGEHLP_SYMBOL64.self,
+                                         capacity: 1)
+
+            let hThread: HANDLE = GetCurrentThread()
+            while StackWalk64(Backtrace.MachineType, hProcess, hThread,
+                              &Frame, &cxr, nil, SymFunctionTableAccess64,
+                              SymGetModuleBase64, nil) {
+                var qwModuleBase: DWORD64 =
+                    SymGetModuleBase64(hProcess, Frame.AddrPC.Offset)
+
+                let module: String = withUnsafeMutablePointer(to: &qwModuleBase) {
+                    $0.withMemoryRebound(to: HINSTANCE.self, capacity: 1) { hInstance in
+                        String(decoding: Array<WCHAR>(unsafeUninitializedCapacity: Int(MAX_PATH + 1)) {
+                            $1 = Int(GetModuleFileNameW(hInstance.pointee,
+                                                        $0.baseAddress,
+                                                        DWORD($0.count)))
+                        }, as: UTF16.self)
+                    }
+                }
+
+                pSymbol.pointee.SizeOfStruct =
+                    DWORD(MemoryLayout<IMAGEHLP_SYMBOL64>.size)
+                pSymbol.pointee.MaxNameLength = DWORD(kMaxSymbolLength)
+                _ = SymGetSymFromAddr64(hProcess, Frame.AddrPC.Offset, nil,
+                                        pSymbol)
+
+                var symbol: String =
+                    withUnsafePointer(to: &pSymbol.pointee.Name) {
+                        String(cString: $0)
+                    }
+
+                // Undecorate Swift 3+ names only.  Earlier Swift decorations
+                // are unsupported.  Any MSVC name decoration has been
+                // unperformed during the DbgHelp operation through the use of
+                // the `SYMOPT_UNDNAME` option.
+                if symbol.hasPrefix("$s") || symbol.hasPrefix("$S") {
+                    symbol = _stdlib_demangleName(symbol)
+                }
+
+                var Displacement: DWORD = 0
+                var Line: IMAGEHLP_LINE64 = IMAGEHLP_LINE64()
+                Line.SizeOfStruct = DWORD(MemoryLayout<IMAGEHLP_LINE64>.size)
+                _ = SymGetLineFromAddr64(hProcess, Frame.AddrPC.Offset,
+                                         &Displacement, &Line)
+
+                var details: String = ""
+
+                if !symbol.isEmpty {
+                    // Truncate the module path to the filename.  The
+                    // `PathFindFileNameW` call will return the beginning of the
+                    // string if a path separator character is not found.
+                    if let pszModule = module.withCString(encodedAs: UTF16.self,
+                                                          PathFindFileNameW) {
+                        details.append(", \(String(decodingCString: pszModule, as: UTF16.self))!\(symbol)")
+                    }
+                }
+
+                if let szFileName = Line.FileName {
+                    details.append(" at \(String(cString: szFileName)):\(Line.LineNumber)")
+                }
+
+                _ = details.withCString { pszDetails in
+                    withVaList([Frame.AddrPC.Offset, pszDetails]) {
+                        #if arch(arm64) || arch(x86_64)
+                        vfprintf(stderr, "%#016x%s\n", $0)
+                        #else
+                        vfprintf(stderr, "%#08x%s\n", $0)
+                        #endif
+                    }
+                }
+            }
+
+            _ = SymCleanup(hProcess)
+
+            // We have not handled the exception, continue the search.
+            return EXCEPTION_CONTINUE_SEARCH
+        }
+    }
+}
+
 #else
 public enum Backtrace {
     public static func install() {}
