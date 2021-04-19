@@ -174,7 +174,7 @@ public enum Backtrace {
 
                 let module: String = withUnsafeMutablePointer(to: &qwModuleBase) {
                     $0.withMemoryRebound(to: HINSTANCE.self, capacity: 1) { hInstance in
-                        String(decoding: Array<WCHAR>(unsafeUninitializedCapacity: Int(MAX_PATH + 1)) {
+                        String(decoding: [WCHAR](unsafeUninitializedCapacity: Int(MAX_PATH + 1)) {
                             $1 = Int(GetModuleFileNameW(hInstance.pointee,
                                                         $0.baseAddress,
                                                         DWORD($0.count)))
