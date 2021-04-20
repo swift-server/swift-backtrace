@@ -23,6 +23,7 @@ import ucrt
 #endif
 #endif
 
+#if os(Linux) || os(Windows)
 @_silgen_name("swift_demangle")
 public
 func _stdlib_demangleImpl(
@@ -53,3 +54,4 @@ internal func _stdlib_demangleName(_ mangledName: String) -> String {
         return mangledName
     }
 }
+#endif
