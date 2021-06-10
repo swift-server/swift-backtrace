@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+
+  runtime-setup:
+    image: swift-linux-backtrace:20.04-5.4
+    build:
+      args:
+        ubuntu_version: "focal"
+        swift_version: "5.4"
+
+  test:
+    image: swift-linux-backtrace:20.04-5.4
+
+  shell:
+    image: swift-linux-backtrace:20.04-5.4
