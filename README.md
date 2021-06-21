@@ -25,6 +25,9 @@ $ swift build -c release -Xswiftc -g
 
 When your app crashes, a stacktrace will be printed to `stderr`.
 
+## Security
+
+Please see [SECURITY.md](SECURITY.md) for details on the security process.
 
 ## Acknowledgements
 
