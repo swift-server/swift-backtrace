@@ -61,10 +61,23 @@ private let errorCallback: CBacktraceErrorCallback? = {
     }
 }
 
+private func printBacktrace(signal: CInt) {
+    _ = fputs("Received signal \(signal). Backtrace:\n", stderr)
+    backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+}
+
 public enum Backtrace {
+    /// Install the backtrace handler on `SIGILL`.
     public static func install() {
-        self.setupHandler(signal: SIGILL) { _ in
-            backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+        Backtrace.install(signals: [SIGILL])
+    }
+
+    /// Install the backtrace handler when any of `signals` happen.
+    public static func install(signals: [CInt]) {
+        for signal in signals {
+            self.setupHandler(signal: signal) { signal in
+                printBacktrace(signal: signal)
+            }
         }
     }
 
