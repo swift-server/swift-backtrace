@@ -122,6 +122,11 @@ public enum Backtrace {
         #endif
     }
 
+    @available(*, deprecated, message: "signal selection unavailable on Windows")
+    public static func install(signals: [CInt]) {
+        Backtrace.install()
+    }
+
     public static func install() {
         // Install a last-chance vectored exception handler to capture the error
         // before the termination and report the stack trace.  It is unlikely
@@ -258,6 +263,8 @@ public enum Backtrace {
 #else
 public enum Backtrace {
     public static func install() {}
+
+    public static func install(signals: [CInt]) {}
 
     @available(*, deprecated, message: "This method will be removed in the next major version.")
     public static func print() {}
