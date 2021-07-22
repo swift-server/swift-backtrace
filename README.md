@@ -3,7 +3,7 @@
 This Swift package provides support for automatically printing crash backtraces of Swift programs.
 
 The library is designed to fill a gap in backtraces support for Swift on non-Darwin platforms. 
-When this gap is closed at the langauge runtime level, this library will become redundant and be deprecated.
+When this gap is closed at the language runtime level, this library will become redundant and be deprecated.
 
 ## Usage
 
