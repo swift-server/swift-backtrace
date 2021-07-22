@@ -3,12 +3,12 @@
 This Swift package provides support for automatically printing crash backtraces of Swift programs.
 
 The library is designed to fill a gap in backtraces support for Swift on non-Darwin platforms. 
-In the futuer, as this gap is closed as the langauge runtime level, this library will become redundant and be deprecated.
+When this gap is closed at the langauge runtime level, this library will become redundant and be deprecated.
 
 ## Usage
 
 In most cases, direct usage of this library is discouraged. 
-Instead, use [swift-service-lifecycle](https://github.com/swift-server/swift-service-lifecycle) which helps set up the application lifecycle including setting up backtrace hooks when needed. 
+Instead, use [swift-service-lifecycle](https://github.com/swift-server/swift-service-lifecycle) which helps manage the application lifecycle including setting up backtraces hooks when needed. 
 
 Add `https://github.com/swift-server/swift-backtrace.git` as a dependency in your `Package.swift`.
 
