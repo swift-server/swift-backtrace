@@ -7,7 +7,7 @@ When this gap is closed at the language runtime level, this library will become 
 
 ## Usage
 
-In most cases, direct usage of this library is discouraged. 
+When building web-services and daemons, direct usage of this library is discouraged. 
 Instead, use [swift-service-lifecycle](https://github.com/swift-server/swift-service-lifecycle) which helps manage the application lifecycle including setting up backtraces hooks when needed. 
 
 Add `https://github.com/swift-server/swift-backtrace.git` as a dependency in your `Package.swift`.
