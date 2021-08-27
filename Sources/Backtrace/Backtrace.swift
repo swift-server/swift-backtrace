@@ -69,7 +69,7 @@ public struct Backtrace: CustomStringConvertible, CustomDebugStringConvertible {
                             && (!sf.symbol.isEmpty || !sf.file.isEmpty)
                 }.map { (_: Int, sf: StackFrame) -> StackFrame in
                     /*#if os(Android)
-                    AndroidLogcat.d("SwiftBackTrace", "\(sf)")
+                    AndroidLogcat.d("SwiftNativeBackTrace", "\(sf)")
                     #endif*/
                     return sf
                 }
@@ -77,7 +77,7 @@ public struct Backtrace: CustomStringConvertible, CustomDebugStringConvertible {
         kThrownCallStack.set(backtrace)
 
         /*#if os(Android)
-        AndroidLogcat.e("SwiftBackTrace", "swift_willThrow")
+        AndroidLogcat.e("SwiftNativeBackTrace", "swift_willThrow")
         #endif*/
     }
 
