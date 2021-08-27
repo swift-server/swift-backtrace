@@ -39,6 +39,17 @@ POSSIBILITY OF SUCH DAMAGE.  */
 #include "include/backtrace.h"
 #include "internal.h"
 
+/*
+// for debug on Android platform
+#include <android/log.h>
+#define LOG_TAG "Swift_Log"
+#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE,TAG,__VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+*/
+
 /* The main backtrace_full routine.  */
 
 /* Data passed through _Unwind_Backtrace.  */
@@ -90,7 +101,7 @@ unwind (struct _Unwind_Context *context, void *vdata)
     bdata->ret = bdata->callback (bdata->data, pc, NULL, 0, NULL);
   else
     bdata->ret = backtrace_pcinfo (bdata->state, pc, bdata->callback,
-				   bdata->error_callback, bdata->data);
+                   bdata->error_callback, bdata->data);
   if (bdata->ret != 0)
     return _URC_END_OF_STACK;
 
@@ -101,8 +112,8 @@ unwind (struct _Unwind_Context *context, void *vdata)
 
 int
 backtrace_full (struct backtrace_state *state, int skip,
-		backtrace_full_callback callback,
-		backtrace_error_callback error_callback, void *data)
+        backtrace_full_callback callback,
+        backtrace_error_callback error_callback, void *data)
 {
   struct backtrace_data bdata;
   void *p;
