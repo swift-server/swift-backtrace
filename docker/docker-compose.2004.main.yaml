@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+
+  runtime-setup:
+    image: swift-linux-backtrace:20.04-main
+    build:
+      args:
+        base_image: "swiftlang/swift:nightly-main-focal"
+
+  test:
+    image: swift-linux-backtrace:20.04-main
+
+  shell:
+    image: swift-linux-backtrace:20.04-main
