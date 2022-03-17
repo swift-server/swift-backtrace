@@ -77,6 +77,7 @@ public enum Backtrace {
         for signal in signals {
             self.setupHandler(signal: signal) { signal in
                 printBacktrace(signal: signal)
+                raise(signal)
             }
         }
     }
