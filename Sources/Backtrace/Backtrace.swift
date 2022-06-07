@@ -69,7 +69,7 @@ private func printBacktrace(signal: CInt) {
 public enum Backtrace {
     /// Install the backtrace handler on `SIGILL`.
     public static func install() {
-        Backtrace.install(signals: [SIGILL])
+        Backtrace.install(signals: [SIGILL, SIGSEGV])
     }
 
     /// Install the backtrace handler when any of `signals` happen.

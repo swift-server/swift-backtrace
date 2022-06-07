@@ -15,22 +15,52 @@
 import XCTest
 
 public final class BacktraceTests: XCTestCase {
-    func testBacktrace() {
-        #if os(Linux)
+    func testFatalError() throws {
+        #if !os(Linux)
+        try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
         let expectedError = UUID().uuidString
+        let stderr = try runSample(reason: expectedError)
+        print(stderr)
+
+        XCTAssert(stderr.contains("Received signal 4. Backtrace:"))
+        XCTAssert(stderr.contains("Current stack trace:"), "expected stanard error to include backtrace")
+        XCTAssert(stderr.contains("Fatal error: \(expectedError)"), "expected stanard error to include error information")
+    }
+
+    func testSIGILL() throws {
+        #if !os(Linux)
+        try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
+        let stderr = try runSample(reason: "SIGILL")
+        print(stderr)
+
+        XCTAssert(stderr.contains("Received signal 4. Backtrace:"))
+        XCTAssert(stderr.contains("Sample.raiseSignal"))
+    }
+
+    func testSIGSEGV() throws {
+        #if !os(Linux)
+        try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
+        let stderr = try runSample(reason: "SIGSEGV")
+        print(stderr)
+
+        XCTAssert(stderr.contains("Received signal 11. Backtrace:"))
+        XCTAssert(stderr.contains("Sample.raiseSignal"))
+    }
+
+    func runSample(reason: String) throws -> String {
         let pipe = Pipe()
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/swift")
-        process.arguments = ["run", "Sample", expectedError]
+        process.arguments = ["run", "Sample", reason]
         process.standardError = pipe
-        XCTAssertNoThrow(try process.run())
-        if process.isRunning {
-            process.waitUntilExit()
-        }
-        let stderr = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-        print(stderr)
-        XCTAssert(stderr.contains("Current stack trace:"), "expected stanard error to include backtrace")
-        XCTAssert(stderr.contains("Fatal error: \(expectedError)"), "expected stanard error to include error information")
-        #endif
+        try process.run()
+        process.waitUntilExit()
+        return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
     }
 }

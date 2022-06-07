@@ -13,7 +13,24 @@
 //===----------------------------------------------------------------------===//
 
 import Backtrace
+#if canImport(Darwin)
+import Darwin
+#elseif os(Linux)
+import Glibc
+#endif
+
+Backtrace.install()
+
+func raiseSignal(_ signal: Int32) {
+    raise(signal)
+}
 
 let reason = CommandLine.arguments.count == 2 ? CommandLine.arguments[1] : "unknown"
-Backtrace.install()
-fatalError(reason)
+switch reason.uppercased() {
+case "SIGILL":
+    raiseSignal(SIGILL)
+case "SIGSEGV":
+    raiseSignal(SIGSEGV)
+default:
+    fatalError(reason)
+}

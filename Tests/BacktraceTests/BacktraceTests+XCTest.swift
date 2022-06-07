@@ -25,7 +25,9 @@ import XCTest
 extension BacktraceTests {
     public static var allTests: [(String, (BacktraceTests) -> () throws -> Void)] {
         return [
-            ("testBacktrace", testBacktrace),
+            ("testFatalError", testFatalError),
+            ("testSIGILL", testSIGILL),
+            ("testSIGSEGV", testSIGSEGV),
         ]
     }
 }
