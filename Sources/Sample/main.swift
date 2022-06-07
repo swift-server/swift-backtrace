@@ -31,6 +31,10 @@ case "SIGILL":
     raiseSignal(SIGILL)
 case "SIGSEGV":
     raiseSignal(SIGSEGV)
+case "SIGBUS":
+    raiseSignal(SIGBUS)
+case "SIGFPE":
+    raiseSignal(SIGFPE)
 default:
     fatalError(reason)
 }

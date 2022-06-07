@@ -37,7 +37,7 @@ public final class BacktraceTests: XCTestCase {
         let stderr = try runSample(reason: "SIGILL")
         print(stderr)
 
-        XCTAssert(stderr.contains("Received signal 4. Backtrace:"))
+        XCTAssert(stderr.contains("Received signal \(SIGILL). Backtrace:"))
         XCTAssert(stderr.contains("Sample.raiseSignal"))
     }
 
@@ -49,7 +49,31 @@ public final class BacktraceTests: XCTestCase {
         let stderr = try runSample(reason: "SIGSEGV")
         print(stderr)
 
-        XCTAssert(stderr.contains("Received signal 11. Backtrace:"))
+        XCTAssert(stderr.contains("Received signal \(SIGSEGV). Backtrace:"))
+        XCTAssert(stderr.contains("Sample.raiseSignal"))
+    }
+
+    func testSIGBUS() throws {
+        #if !os(Linux)
+        try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
+        let stderr = try runSample(reason: "SIGBUS")
+        print(stderr)
+
+        XCTAssert(stderr.contains("Received signal \(SIGBUS). Backtrace:"))
+        XCTAssert(stderr.contains("Sample.raiseSignal"))
+    }
+
+    func testSIGFPE() throws {
+        #if !os(Linux)
+        try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
+        let stderr = try runSample(reason: "SIGFPE")
+        print(stderr)
+
+        XCTAssert(stderr.contains("Received signal \(SIGFPE). Backtrace:"))
         XCTAssert(stderr.contains("Sample.raiseSignal"))
     }
 

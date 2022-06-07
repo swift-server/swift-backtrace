@@ -28,6 +28,8 @@ extension BacktraceTests {
             ("testFatalError", testFatalError),
             ("testSIGILL", testSIGILL),
             ("testSIGSEGV", testSIGSEGV),
+            ("testSIGBUS", testSIGBUS),
+            ("testSIGFPE", testSIGFPE),
         ]
     }
 }
