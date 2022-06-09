@@ -63,12 +63,15 @@ done
 
 EXCLUDES=(
 '*test*'
-'alloc.c'
 'nounwind.c'
 'pecoff.c'
 'read.c'
 'unknown.c'
 'xcoff.c'
+'macho.c'
+'alloc.c'
+'allocfail.c'
+'instrumented_alloc.c'
 )
 
 for exclude in "${EXCLUDES[@]}"

@@ -14,6 +14,10 @@
 /* Define to 1 if you have the `clock_gettime' function. */
 #define HAVE_CLOCK_GETTIME 1
 
+/* Define to 1 if you have the declaration of `getpagesize', and to 0 if you
+   don't. */
+#define HAVE_DECL_GETPAGESIZE 1
+
 /* Define to 1 if you have the declaration of `strnlen', and to 0 if you
    don't. */
 #define HAVE_DECL_STRNLEN 1
@@ -36,8 +40,16 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
-/* Define to 1 if you have the `z' library (-lz). */
-/* #undef HAVE_LIBZ */
+/* Define to 1 if you have KERN_PROC and KERN_PROC_PATHNAME in <sys/sysctl.h>.
+   */
+/* #undef HAVE_KERN_PROC */
+
+/* Define to 1 if you have KERN_PROCARGS and KERN_PROC_PATHNAME in
+   <sys/sysctl.h>. */
+/* #undef HAVE_KERN_PROC_ARGS */
+
+/* Define if -llzma is available. */
+/* #undef HAVE_LIBLZMA */
 
 /* Define to 1 if you have the <link.h> header file. */
 #define HAVE_LINK_H 1
@@ -47,6 +59,9 @@
 
 /* Define to 1 if you have the `lstat' function. */
 #define HAVE_LSTAT 1
+
+/* Define to 1 if you have the <mach-o/dyld.h> header file. */
+/* #undef HAVE_MACH_O_DYLD_H */
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -85,7 +100,7 @@
 #define HAVE_UNISTD_H 1
 
 /* Define if -lz is available. */
-/* #undef HAVE_ZLIB */
+#define HAVE_ZLIB 1
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
@@ -133,6 +148,11 @@
 # define __EXTENSIONS__ 1
 #endif
 
+
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 /* #undef _FILE_OFFSET_BITS */

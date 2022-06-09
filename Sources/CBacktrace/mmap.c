@@ -1,6 +1,6 @@
 #ifdef __linux__
 /* mmap.c -- Memory allocation with mmap.
-   Copyright (C) 2012-2018 Free Software Foundation, Inc.
+   Copyright (C) 2012-2021 Free Software Foundation, Inc.
    Written by Ian Lance Taylor, Google.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,10 @@ POSSIBILITY OF SUCH DAMAGE.  */
 
 #include "include/backtrace.h"
 #include "internal.h"
+
+#ifndef HAVE_DECL_GETPAGESIZE
+extern int getpagesize (void);
+#endif
 
 /* Memory allocation on systems that provide anonymous mmap.  This
    permits the backtrace functions to be invoked from a signal
@@ -170,7 +174,7 @@ backtrace_alloc (struct backtrace_state *state,
       if (page == MAP_FAILED)
 	{
 	  if (error_callback)
-	    error_callback (data, "mmap for alloc", errno);
+	    error_callback (data, "mmap", errno);
 	}
       else
 	{
@@ -322,6 +326,8 @@ backtrace_vector_release (struct backtrace_state *state,
   backtrace_free (state, (char *) vec->base + aligned, alc,
 		  error_callback, data);
   vec->alc = 0;
+  if (vec->size == 0)
+    vec->base = NULL;
   return 1;
 }
 #endif
