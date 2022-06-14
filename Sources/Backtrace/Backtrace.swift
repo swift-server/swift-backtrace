@@ -64,6 +64,7 @@ private let errorCallback: CBacktraceErrorCallback? = {
 private func printBacktrace(signal: CInt) {
     _ = fputs("Received signal \(signal). Backtrace:\n", stderr)
     backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+    fflush(stderr)
 }
 
 public enum Backtrace {
