@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.0
 
 import PackageDescription
 
@@ -10,16 +10,14 @@ let package = Package(
             targets: ["Backtrace"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    ],
+    dependencies: [],
     targets: [
         .target(name: "Backtrace",
                 dependencies: ["CBacktrace"]),
         .target(name: "CBacktrace",
                 dependencies: []),
-        .executableTarget(name: "Sample",
-                          dependencies: ["Backtrace"]),
+        .target(name: "Sample",
+                dependencies: ["Backtrace"]),
         .testTarget(name: "BacktraceTests",
                     dependencies: ["Backtrace"]),
     ]

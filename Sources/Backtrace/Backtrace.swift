@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftLinuxBacktrace open source project
 //
-// Copyright (c) 2019-2020 Apple Inc. and the SwiftLinuxBacktrace project authors
+// Copyright (c) 2019-2022 Apple Inc. and the SwiftLinuxBacktrace project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -124,11 +124,13 @@ public enum Backtrace {
         #endif
     }
 
+    /// Signal selection unavailable on Windows. Use ``install()-484jy``.
     @available(*, deprecated, message: "signal selection unavailable on Windows")
     public static func install(signals: [CInt]) {
         Backtrace.install()
     }
 
+    /// Install the backtrace handler on default signals.
     public static func install() {
         // Install a last-chance vectored exception handler to capture the error
         // before the termination and report the stack trace.  It is unlikely
@@ -264,8 +266,10 @@ public enum Backtrace {
 
 #else
 public enum Backtrace {
+    /// Install the backtrace handler on default signals. Available on Windows and Linux only.
     public static func install() {}
 
+    /// Install the backtrace handler on specific signals. Available on Linux only.
     public static func install(signals: [CInt]) {}
 
     @available(*, deprecated, message: "This method will be removed in the next major version.")
