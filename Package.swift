@@ -19,7 +19,7 @@ let package = Package(
         .target(name: "CBacktrace",
                 dependencies: []),
         .executableTarget(name: "Sample",
-                dependencies: ["Backtrace"]),
+                          dependencies: ["Backtrace"]),
         .testTarget(name: "BacktraceTests",
                     dependencies: ["Backtrace"]),
     ]
