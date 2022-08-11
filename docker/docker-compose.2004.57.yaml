@@ -10,6 +10,8 @@ services:
 
   test:
     image: swift-linux-backtrace:20.04-5.7
+    environment:
+      - FORCE_TEST_DISCOVERY=--enable-test-discovery
 
   shell:
     image: swift-linux-backtrace:20.04-5.7
