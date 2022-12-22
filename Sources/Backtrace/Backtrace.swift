@@ -23,32 +23,37 @@ typealias CBacktraceSyminfoCallback = @convention(c) (_ data: UnsafeMutableRawPo
 
 private let state = backtrace_create_state(nil, /* BACKTRACE_SUPPORTS_THREADS */ 1, nil, nil)
 
-private let fullCallback: CBacktraceFullCallback? = {
-    _, pc, filename, lineno, function in
+private var installedFormat: Format = .default
 
-    var str = "0x"
-    str.append(String(pc, radix: 16))
+private let callback: CBacktraceFullCallback? = { _, pc, filename, lineno, function in
+    let formattedPc = "0x\(String(pc, radix: 16))"
+
+    let demangledFunction: String?
     if let function = function {
-        str.append(", ")
         var fn = String(cString: function)
         if fn.hasPrefix("$s") || fn.hasPrefix("$S") {
             fn = _stdlib_demangleName(fn)
         }
-        str.append(fn)
+        demangledFunction = fn
+    } else {
+        demangledFunction = nil
     }
-    if let filename = filename {
-        str.append(" at ")
-        str.append(String(cString: filename))
-        str.append(":")
-        str.append(String(lineno))
-    }
-    str.append("\n")
 
-    str.withCString { ptr in
-        _ = withVaList([ptr]) { vaList in
-            vfprintf(stderr, "%s", vaList)
+    let file: (fileName: String, line: Int)?
+    if let filename = filename {
+        file = (fileName: String(cString: filename), line: Int(lineno))
+    } else {
+        file = nil
+    }
+
+    if let line = installedFormat.formatter(formattedPc, demangledFunction, file) {
+        line.withCString { ptr in
+            _ = withVaList([ptr]) { vaList in
+                vfprintf(stderr, "%s", vaList)
+            }
         }
     }
+
     return 0
 }
 
@@ -63,18 +68,20 @@ private let errorCallback: CBacktraceErrorCallback? = {
 
 private func printBacktrace(signal: CInt) {
     _ = fputs("Received signal \(signal). Backtrace:\n", stderr)
-    backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+    backtrace_full(state, Int32(installedFormat.skip), callback, errorCallback, nil)
     fflush(stderr)
 }
 
 public enum Backtrace {
     /// Install the backtrace handler on default signals: `SIGILL`, `SIGSEGV`, `SIGBUS`, `SIGFPE`.
-    public static func install() {
-        Backtrace.install(signals: [SIGILL, SIGSEGV, SIGBUS, SIGFPE])
+    public static func install(format: Format = .default) {
+        Backtrace.install(signals: [SIGILL, SIGSEGV, SIGBUS, SIGFPE], format: format)
     }
 
     /// Install the backtrace handler when any of `signals` happen.
-    public static func install(signals: [CInt]) {
+    public static func install(signals: [CInt], format: Format = .default) {
+        installedFormat = format
+
         for signal in signals {
             self.setupHandler(signal: signal) { signal in
                 printBacktrace(signal: signal)
@@ -85,7 +92,7 @@ public enum Backtrace {
 
     @available(*, deprecated, message: "This method will be removed in the next major version.")
     public static func print() {
-        backtrace_full(state, /* skip */ 0, fullCallback, errorCallback, nil)
+        backtrace_full(state, Int32(installedFormat.skip), callback, errorCallback, nil)
     }
 
     private static func setupHandler(signal: Int32, handler: @escaping @convention(c) (CInt) -> Void) {
@@ -105,9 +112,13 @@ public enum Backtrace {
 #if swift(<5.4)
 #error("unsupported Swift version")
 #else
+import Foundation
+
 @_implementationOnly import CRT
 @_implementationOnly import WinSDK
 #endif
+
+private var installedFormat: Format = .default
 
 public enum Backtrace {
     private static var MachineType: DWORD {
@@ -126,12 +137,14 @@ public enum Backtrace {
 
     /// Signal selection unavailable on Windows. Use ``install()-484jy``.
     @available(*, deprecated, message: "signal selection unavailable on Windows")
-    public static func install(signals: [CInt]) {
-        Backtrace.install()
+    public static func install(signals: [CInt], format: Format = .default) {
+        Backtrace.install(format: format)
     }
 
     /// Install the backtrace handler on default signals.
-    public static func install() {
+    public static func install(format: Format = .default) {
+        installedFormat = format
+
         // Install a last-chance vectored exception handler to capture the error
         // before the termination and report the stack trace.  It is unlikely
         // that this will be recovered at this point by a SEH handler.
@@ -188,9 +201,15 @@ public enum Backtrace {
                                          capacity: 1)
 
             let hThread: HANDLE = GetCurrentThread()
+            var toSkip = installedFormat.skip
             while StackWalk64(Backtrace.MachineType, hProcess, hThread,
                               &Frame, &cxr, nil, SymFunctionTableAccess64,
                               SymGetModuleBase64, nil) {
+                if toSkip > 0 {
+                    toSkip -= 1
+                    continue
+                }
+
                 var qwModuleBase: DWORD64 =
                     SymGetModuleBase64(hProcess, Frame.AddrPC.Offset)
 
@@ -229,29 +248,40 @@ public enum Backtrace {
                 _ = SymGetLineFromAddr64(hProcess, Frame.AddrPC.Offset,
                                          &Displacement, &Line)
 
-                var details: String = ""
 
+                #if arch(arm64) || arch(x86_64)
+                let formattedPc = String(format: "%#016x", Frame.AddrPC.Offset)
+                #else
+                let formattedPc = String(format: "%#08x", Frame.AddrPC.Offset)
+                #endif
+
+                let demangledFunction: String?
                 if !symbol.isEmpty {
                     // Truncate the module path to the filename.  The
                     // `PathFindFileNameW` call will return the beginning of the
                     // string if a path separator character is not found.
                     if let pszModule = module.withCString(encodedAs: UTF16.self,
                                                           PathFindFileNameW) {
-                        details.append(", \(String(decodingCString: pszModule, as: UTF16.self))!\(symbol)")
+                        demangledFunction = "\(String(decodingCString: pszModule, as: UTF16.self))!\(symbol)"
+                    } else {
+                        demangledFunction = nil
                     }
+                } else {
+                    demangledFunction = nil
                 }
 
+                let file: (fileName: String, line: Int)?
                 if let szFileName = Line.FileName {
-                    details.append(" at \(String(cString: szFileName)):\(Line.LineNumber)")
+                    file = (fileName: String(cString: szFileName), line: Int(Line.LineNumber))
+                } else {
+                    file = nil
                 }
 
-                _ = details.withCString { pszDetails in
-                    withVaList([Frame.AddrPC.Offset, pszDetails]) {
-                        #if arch(arm64) || arch(x86_64)
-                        vfprintf(stderr, "%#016x%s\n", $0)
-                        #else
-                        vfprintf(stderr, "%#08x%s\n", $0)
-                        #endif
+                if let line = installedFormat.formatter(formattedPc, demangledFunction, file) {
+                    _ = line.withCString { pszDetails in
+                        withVaList([pszDetails]) {
+                            vfprintf(stderr, "%s", $0)
+                        }
                     }
                 }
             }
@@ -267,10 +297,10 @@ public enum Backtrace {
 #else
 public enum Backtrace {
     /// Install the backtrace handler on default signals. Available on Windows and Linux only.
-    public static func install() {}
+    public static func install(format: Format = .default) {}
 
     /// Install the backtrace handler on specific signals. Available on Linux only.
-    public static func install(signals: [CInt]) {}
+    public static func install(signals: [CInt], format: Format = .default) {}
 
     @available(*, deprecated, message: "This method will be removed in the next major version.")
     public static func print() {}
