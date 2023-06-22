@@ -19,7 +19,9 @@ import Darwin
 import Glibc
 #endif
 
+#if swift(<5.9) || os(Windows)
 Backtrace.install()
+#endif
 
 func raiseSignal(_ signal: Int32) {
     raise(signal)
