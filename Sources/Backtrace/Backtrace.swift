@@ -12,7 +12,21 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if os(Linux)
+// Swift 5.9 has its own built-in backtracing support in the runtime;
+// we don't want to activate this library if we're using 5.9 or above.
+#if swift(>=5.9) && !os(Windows)
+public enum Backtrace {
+    @available(*, deprecated, message: "This is no longer needed in Swift 5.9")
+    public static func install() {}
+
+    @available(*, deprecated, message: "This is no longer needed in Swift 5.9")
+    public static func install(signals: [CInt]) {}
+
+    @available(*, deprecated, message: "This method will be removed in the next major version.")
+    public static func print() {}
+}
+
+#elseif os(Linux)
 import CBacktrace
 import Glibc
 

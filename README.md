@@ -7,8 +7,8 @@ When this gap is closed at the language runtime level, this library will become 
 
 ## Usage
 
-When building web-services and daemons, direct usage of this library is discouraged. 
-Instead, use [swift-service-lifecycle](https://github.com/swift-server/swift-service-lifecycle) which helps manage the application lifecycle including setting up backtraces hooks when needed. 
+**Note**: You do not need this library on Linux as of Swift 5.9, which has
+built-in backtracing support.
 
 Add `https://github.com/swift-server/swift-backtrace.git` as a dependency in your `Package.swift`.
 

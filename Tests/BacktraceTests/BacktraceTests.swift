@@ -20,6 +20,10 @@ public final class BacktraceTests: XCTestCase {
         try XCTSkipIf(true, "test is only supported on Linux")
         #endif
 
+        #if swift(>=5.9)
+        try XCTSkipIf(true, "test is not supported on Swift 5.9")
+        #endif
+
         let expectedError = UUID().uuidString
         let stderr = try runSample(reason: expectedError)
         print(stderr)
@@ -34,6 +38,10 @@ public final class BacktraceTests: XCTestCase {
         try XCTSkipIf(true, "test is only supported on Linux")
         #endif
 
+        #if swift(>=5.9)
+        try XCTSkipIf(true, "test is not supported on Swift 5.9")
+        #endif
+
         let stderr = try runSample(reason: "SIGILL")
         print(stderr)
 
@@ -44,6 +52,10 @@ public final class BacktraceTests: XCTestCase {
     func testSIGSEGV() throws {
         #if !os(Linux)
         try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
+        #if swift(>=5.9)
+        try XCTSkipIf(true, "test is not supported on Swift 5.9")
         #endif
 
         let stderr = try runSample(reason: "SIGSEGV")
@@ -58,6 +70,10 @@ public final class BacktraceTests: XCTestCase {
         try XCTSkipIf(true, "test is only supported on Linux")
         #endif
 
+        #if swift(>=5.9)
+        try XCTSkipIf(true, "test is not supported on Swift 5.9")
+        #endif
+
         let stderr = try runSample(reason: "SIGBUS")
         print(stderr)
 
@@ -68,6 +84,10 @@ public final class BacktraceTests: XCTestCase {
     func testSIGFPE() throws {
         #if !os(Linux)
         try XCTSkipIf(true, "test is only supported on Linux")
+        #endif
+
+        #if swift(>=5.9)
+        try XCTSkipIf(true, "test is not supported on Swift 5.9")
         #endif
 
         let stderr = try runSample(reason: "SIGFPE")
