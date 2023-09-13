@@ -17,6 +17,14 @@ import Backtrace
 import Darwin
 #elseif os(Linux)
 import Glibc
+#elseif os(Windows)
+@_implementationOnly import CRT
+@_implementationOnly import WinSDK
+
+let SIGILL: Int32 = 4
+let SIGSEGV: Int32 = 11
+let SIGBUS: Int32 = 10
+let SIGFPE: Int32 = 8
 #endif
 
 #if swift(<5.9) || os(Windows)

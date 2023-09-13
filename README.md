@@ -31,6 +31,16 @@ $ swift build -c release -Xswiftc -g
 
 When your app crashes, a stacktrace will be printed to `stderr`.
 
+### Formats
+
+The library comes with two built-in stack trace formats:
+- `.full`: default format, prints everything in one long line per stack entry
+- `.colored`: lighter format with newlines and colors, easier to read but takes up more vertical space
+
+Use `Backtrace.install(format:)` to specify which format you want.
+
+You also have the option to specify your own format using `.custom(formatter: Formatter, skip: Int)`. The `Formatter` closure is executed for every line of the stack trace and prints the returned string.
+
 ## Security
 
 Please see [SECURITY.md](SECURITY.md) for details on the security process.
