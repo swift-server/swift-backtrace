@@ -13,7 +13,13 @@
 //===----------------------------------------------------------------------===//
 
 #if os(Linux)
+#if canImport(Glibc)
 import Glibc
+#elseif canImport(Musl)
+import Musl
+#else
+#error("Unsupported runtime")
+#endif
 #elseif os(Windows)
 #if swift(<5.4)
 #error("unsupported Swift version")

@@ -16,7 +16,13 @@ import Backtrace
 #if canImport(Darwin)
 import Darwin
 #elseif os(Linux)
+#if canImport(Glibc)
 import Glibc
+#elseif canImport(Musl)
+import Musl
+#else
+#error("Unsupported runtime")
+#endif
 #endif
 
 #if swift(<5.9) || os(Windows)
