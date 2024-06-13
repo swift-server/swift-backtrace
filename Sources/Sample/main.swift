@@ -15,8 +15,10 @@
 import Backtrace
 #if canImport(Darwin)
 import Darwin
-#elseif os(Linux)
+#elseif canImport(Glibc)
 import Glibc
+#elseif canImport(Musl)
+import Musl
 #endif
 
 #if swift(<5.9) || os(Windows)

@@ -12,6 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+// Swift 5.9 has its own built-in backtracing support in the runtime;
+// we don't want to activate this library if we're using 5.9 or above.
+#if !(swift(>=5.9) && !os(Windows))
+
 #if os(Linux)
 import Glibc
 #elseif os(Windows)
@@ -54,4 +58,6 @@ internal func _stdlib_demangleName(_ mangledName: String) -> String {
         return mangledName
     }
 }
+#endif
+
 #endif
