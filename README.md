@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This library is now archived as backtracing is built into Swift 5.9+
+
 # Backtrace
 
 This Swift package provides support for automatically printing crash backtraces of Swift programs.
